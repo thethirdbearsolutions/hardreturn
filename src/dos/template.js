@@ -78,7 +78,7 @@ export function buildTemplate(root, onKey, implemented) {
     b.textContent = text;
     extras.appendChild(b);
   }
-  body.appendChild(extras);
+  bar.insertBefore(extras, legend);
   root.appendChild(body);
 
   root.addEventListener('mousedown', (e) => {

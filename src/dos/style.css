@@ -139,8 +139,8 @@ html, body {
 /* the keyboard template */
 #template {
   flex: none;
-  width: min(100%, 980px);
-  font: 11px/1.15 'Helvetica Neue', Arial, sans-serif;
+  width: min(100% - 8px, 1100px);
+  font: 10.5px/1.15 'Helvetica Neue', Arial, sans-serif;
   color: #222;
 }
 
@@ -171,7 +171,7 @@ html, body {
 
 .tpl-body {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
   justify-content: center;
   background: var(--plastic);
@@ -183,12 +183,13 @@ html, body {
 #template.closed .tpl-body { display: none; }
 #template.closed .tpl-legend { visibility: hidden; }
 
-.tpl-group { display: flex; gap: 3px; }
+.tpl-group { display: flex; gap: 3px; flex: 1 1 0; min-width: 0; }
 
 .tpl-key {
   display: flex;
   flex-direction: column;
-  width: 74px;
+  flex: 1 1 0;
+  min-width: 0;
   border-left: 1px solid var(--plastic-edge);
   padding-left: 3px;
 }
@@ -226,7 +227,7 @@ html, body {
   padding: 0 4px;
 }
 
-.tpl-extras { display: flex; gap: 4px; align-items: flex-end; }
+.tpl-extras { display: flex; gap: 4px; align-items: center; margin-left: auto; margin-right: 8px; }
 .tpl-extra {
   font: inherit;
   font-weight: 600;
@@ -238,7 +239,8 @@ html, body {
 }
 .tpl-extra:hover { background: #fff; }
 
-@media (max-width: 700px) {
-  .tpl-key { width: 66px; }
-  #template { font-size: 10px; }
+@media (max-width: 760px) {
+  .tpl-body { flex-wrap: wrap; }
+  .tpl-group { flex-basis: 100%; }
+  .tpl-extras { display: none; }
 }
