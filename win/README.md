@@ -8,6 +8,9 @@ modal dialogs, and Reveal Codes with the codes as pills.
 It edits the same documents as the [DOS front end](../README.md): a `.hr`
 saved in one opens in the other with the same code stream.
 
+![The main window](../shots/win-main.png)
+![Reveal Codes](../shots/win-reveal.png)
+
 ## Run
 
 Serve the repository root and open `/win/`:
