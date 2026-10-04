@@ -47,6 +47,15 @@ export class History {
     this._cursor = ed.cursor;
   }
 
+  // Forget the change begun by before(), when it was put back by hand.
+  drop() {
+    if (this._pending) this.undos.pop();
+    this._pending = false;
+    this._group = null;
+    this._rev = this.ed.rev;
+    this._cursor = this.ed.cursor;
+  }
+
   // Run fn as one undoable change.
   change(fn, group = null) {
     this.before(group);
