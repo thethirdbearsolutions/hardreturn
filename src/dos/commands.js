@@ -372,7 +372,18 @@ P.saveFlow = async function ({ fromExit = false, asText = false } = {}) {
   const label = blockSave ? 'Block name: ' : asText ? 'Document to be saved (DOS Text): ' : 'Document to be saved: ';
   const init = blockSave ? '' : this.displayName(this.doc.path);
   const name = await this.input(label, init);
-  if (!name || !name.trim()) return false;
+  if (name === null) return false;
+  if (!name.trim()) {
+    // nothing typed: in Terrarium, the shell's Save As, as Retrieve uses its Open
+    if (!this.client || blockSave) return false;
+    const untitled = asText ? 'untitled.txt' : 'untitled.hr';
+    const { content, mime } = serialize(untitled, ed.items);
+    let r;
+    try { r = await this.client.request('save', { name: untitled, content, mime }); } catch { return false; }
+    this.doc.path = r.path;
+    ed.markSaved();
+    return true;
+  }
   const path = await this.toPath(name, { ext: asText ? '.TXT' : '.HR' });
   const disp = this.displayName(path);
   if (await this.store.exists(path)) {
