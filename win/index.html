@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hard Return for Windows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Cousine:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/win/style.css">
+</head>
+<body>
+<div class="desktop">
+  <div class="deskicon" tabindex="0" hidden><div class="img"></div><div class="label">Hard Return</div></div>
+  <div id="win" class="window">
+    <div class="titlebar">
+      <button type="button" class="sysbtn" tabindex="-1" aria-label="Control menu"></button>
+      <div class="t">Hard Return</div>
+      <button type="button" class="wbtn min" tabindex="-1" aria-label="Minimize"></button>
+      <button type="button" class="wbtn max" tabindex="-1" aria-label="Restore"></button>
+    </div>
+    <div class="menubar">
+      <button type="button" class="sysbtn docbtn" tabindex="-1" aria-label="Document control menu"></button>
+      <div class="mtitles"></div>
+      <button type="button" class="wbtn restore" tabindex="-1" aria-label="Restore document"></button>
+    </div>
+    <div class="toolbar"></div>
+    <div class="powerbar"></div>
+    <div class="ruler"><canvas></canvas></div>
+    <div class="docarea">
+      <div class="scroller"><div class="spacer"></div></div>
+      <canvas class="pages"></canvas>
+      <div class="caret blink"></div>
+      <div class="guide" hidden></div>
+    </div>
+    <div class="splitter" hidden></div>
+    <div class="reveal" hidden><div class="codes"></div></div>
+    <div class="statusbar"></div>
+    <textarea class="sink" aria-label="Document" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+  </div>
+</div>
+<script type="module" src="../src/win/main.js"></script>
+</body>
+</html>
