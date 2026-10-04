@@ -81,7 +81,10 @@ P.subMenu = async function (draw, keys, act) {
     const c = await this.screenMenu(draw, keys, { exitKeys: ['F1', 'Esc', 'Enter', ' ', '0'] });
     this.msg = null;
     if (c === null) return false;
-    const r = await act(c);
+    // keep the menu on screen behind any prompt the selection raises
+    const bg = this.push({ full: true, draw, key: () => true });
+    let r;
+    try { r = await act(c); } finally { this.pop(bg); }
     if (r === 'exit') return true;
   }
 };
@@ -158,7 +161,7 @@ P.formatPage = function () {
       if (b === null) return;
       if (t >= 0 && b >= 0 && t + b < 10) ed.insertFormatCode(code.tbMar(t, b), this.pageStart());
     } else if (c === '6' || c === 'N') {
-      await this.pageNumbering();
+      if (await this.pageNumbering()) return 'exit';
     } else this.msg = NA;
   });
 };
