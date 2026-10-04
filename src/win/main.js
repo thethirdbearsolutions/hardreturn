@@ -45,14 +45,23 @@ async function boot() {
     if (dropOpen()) { if (k === 'Esc') { closeDrop(); e.preventDefault(); } return; }
     const menu = app.parts.menu;
     if (menu.isOpen) { if (menu.key(k)) e.preventDefault(); return; }
-    // native copy, cut and paste: let the browser fire the clipboard events
+    // Copy, cut and paste: do it here, and also let the browser fire its
+    // clipboard events where Ctrl is its clipboard key (not on a Mac)
     if (k === 'C-C' || k === 'C-X') {
       const text = app.hasSelection ? app.ed.text(...app.ed.blockRange()) : '';
+      sink.focus({ preventScroll: true });
       sink.value = text || ' ';
       sink.select();
+      if (text) runCommand(app, k === 'C-C' ? 'copy' : 'cut');
       return;
     }
-    if (k === 'C-V') { sink.value = ''; return; }
+    if (k === 'C-V') {
+      sink.focus({ preventScroll: true });
+      sink.value = '';
+      pasted = false;
+      setTimeout(() => { if (!pasted) runCommand(app, 'paste'); }, 60);
+      return;
+    }
     if (/^A-[A-Z]$/.test(k) && menu.openByKey(k.slice(2))) { e.preventDefault(); return; }
     if (k === 'A-Space') { e.preventDefault(); return; }
     const cmd = app.keymap[k];
@@ -73,6 +82,7 @@ async function boot() {
     }
     altAlone = false;
   });
+  let pasted = false;
   sink.addEventListener('copy', (e) => {
     const t = app.copySelection();
     if (t === null) return;
@@ -88,6 +98,7 @@ async function boot() {
   });
   sink.addEventListener('paste', (e) => {
     e.preventDefault();
+    pasted = true;
     app.pasteText(e.clipboardData.getData('text/plain'));
   });
 
