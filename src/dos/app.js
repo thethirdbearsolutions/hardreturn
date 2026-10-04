@@ -540,13 +540,16 @@ export class App {
       cur.push({ text, cls, i, col });
       col += n;
     };
+    const first = res.lines[Math.min(fromLine, res.lines.length - 1)];
+    const on = new Set(ed.attrs(first.start));
     for (let li = fromLine; li <= toLine && li < res.lines.length; li++) {
       const line = res.lines[li];
       for (let i = line.start; i < line.end; i++) {
         const it = ed.items[i];
+        if (isPair(it)) { if (it.on) on.add(it.c); else on.delete(it.c); }
         if (isChar(it)) {
           if (i === line.end - 1 && line.how === 'soft' && it === ' ') { add('[SRt]', 'code', i); flushRow(); }
-          else add(it, attrClass(ed.attrs(i)) || '', i);
+          else add(it, attrClass(on) || '', i);
         } else {
           add(`[${label(it)}]`, 'code', i);
           if (it.c === 'HRt' || it.c === 'HPg') flushRow();
