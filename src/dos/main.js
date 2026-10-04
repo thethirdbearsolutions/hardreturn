@@ -42,7 +42,7 @@ async function boot() {
     const root = document.documentElement.style;
     root.setProperty('--cw', `${cw}px`);
     root.setProperty('--ch', `${ch}px`);
-    root.setProperty('--fs', `${(ch * 18) / 16}px`);
+    root.setProperty('--fs', `${(ch * 20) / 16}px`);
     frame.style.width = `${cw * 80}px`;
     frame.style.height = `${ch * 25}px`;
     if (client) client.notify('resize', { w: window.innerWidth, h: window.innerHeight });
