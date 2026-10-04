@@ -91,7 +91,7 @@ export const COMMANDS = {
       app.edit(() => ed.deleteRange(ed.cursor, end));
     },
   },
-  deleteWord: { run: (app) => app.edit(() => { if (!app._dropSelection()) app.ed.deleteWord(); }) },
+  deleteWord: { run: (app) => app.deleteWord() },
 
   // View
   draft: { run: (app) => setPref(app, 'mode', 'draft'), checked: (app) => app.prefs.mode === 'draft' },

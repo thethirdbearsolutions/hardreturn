@@ -212,7 +212,9 @@ export function dialog(app, opts) {
         if (d && !dlg.buttons[d.id].disabled) press(d);
         return;
       }
-      if (e.altKey && !e.ctrlKey && /^Key[A-Z]$|^Digit\d$/.test(e.code)) {
+      // access keys: with Alt anywhere, or alone when not typing into a field
+      const typing = e.target.matches?.('input[type="text"], .listbox, select');
+      if (((e.altKey && !e.ctrlKey) || (!e.altKey && !e.ctrlKey && !e.metaKey && !typing)) && /^Key[A-Z]$|^Digit\d$/.test(e.code)) {
         const k = e.code.slice(-1);
         const hit = [...box.querySelectorAll('[data-key]')].find((x) => x.dataset.key === k && !x.disabled);
         if (hit) {

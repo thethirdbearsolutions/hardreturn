@@ -7,7 +7,7 @@ import { History } from '../core/history.js';
 import { layout, lineAt, caretX, stateAt } from '../core/layout.js';
 import { print, faceName, fontPoints } from '../core/measure.js';
 import { isCode, isChar, isPair, is, code, inches } from '../core/codes.js';
-import { paragraphStart, paragraphEnd, textOf, itemsOf, wordAt } from '../core/stream.js';
+import { paragraphStart, paragraphEnd, textOf, itemsOf, wordAt, prevWordStart } from '../core/stream.js';
 import { KEYBOARDS, isTyping } from './keys.js';
 
 export const DEFAULT_FONT = 'Times New Roman 12pt';
@@ -207,6 +207,19 @@ export class WinApp {
     }, 'del');
   }
 
+  // The word at the cursor and the spaces after it; after the end of a
+  // word (past its punctuation), the word before.
+  deleteWord() {
+    this.edit(() => {
+      if (this._dropSelection()) return;
+      const ed = this.ed;
+      let [a, b] = wordAt(ed.items, ed.cursor);
+      if (a === b) { a = prevWordStart(ed.items, ed.cursor); b = ed.cursor; }
+      while (b < ed.length && ed.items[b] === ' ') b++;
+      if (b > a) { ed.setCursor(a); ed.deleteRange(a, b); }
+    });
+  }
+
   // Bold, Italic, Underline…: wraps a selection and keeps it selected.
   toggleAttr(name) {
     this.edit(() => {
@@ -376,7 +389,7 @@ export class WinApp {
       case 'Tab': this.insert([code.tab()], 'type'); return true;
       case 'Backspace': this.backspace(); return true;
       case 'Del': this.del(); return true;
-      case 'C-Backspace': case 'C-Del': this.edit(() => { if (!this._dropSelection()) ed.deleteWord(); }); return true;
+      case 'C-Backspace': case 'C-Del': this.deleteWord(); return true;
       case 'Ins': ed.typeover = !ed.typeover; this.update(); return true;
       case 'Esc':
         if (ed.blockOn || this.selectMode) { this.clearSelection(); this.update(); }
