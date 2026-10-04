@@ -50,6 +50,11 @@ html, body {
 }
 .window.restored { inset: 20px 28px 48px 28px; }
 
+/* In Terrarium the shell draws the frame and title bar; the menu bar and
+   everything below it are ours */
+html.hosted .window, html.hosted .window.restored { inset: 0; border: 0; box-shadow: none; padding: 0; }
+html.hosted .window > .titlebar { display: none; }
+
 .titlebar {
   flex: none; height: 20px; display: flex; align-items: stretch;
   background: var(--navy); color: #fff; border-bottom: 1px solid var(--dark);
