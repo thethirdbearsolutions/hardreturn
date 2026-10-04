@@ -88,7 +88,9 @@ function buildLine(ctx, start, st, stopAt) {
       placed[seg.from - 1].w = ns - placed[seg.from - 1].x;
     }
     const dx = ns - seg.startX;
-    for (let k = seg.from; k < placed.length; k++) placed[k].x += dx;
+    // [Center] and [Flsh Rgt] stay where they were typed; their text moves
+    const first = seg.kind === 'tab' ? seg.from : seg.from + 1;
+    for (let k = first; k < placed.length; k++) placed[k].x += dx;
     x += dx;
     seg = null;
   };

@@ -14,6 +14,7 @@ export class Editor {
     this.typeover = false;
     this.version = 0;
     this.savedVersion = 0;
+    this.rev = 0; // bumps on every change, never rewinds (cache key)
     this.deletions = [];
     this._lastDel = null;
     this.goalX = null;
@@ -29,11 +30,12 @@ export class Editor {
     this.cursor = 0;
     this.anchor = null;
     this.version++;
+    this.rev++;
     this.savedVersion = this.version;
     this._lastDel = null;
   }
 
-  _changed() { this.version++; this.goalX = null; }
+  _changed() { this.version++; this.rev++; this.goalX = null; }
 
   setCursor(i, { keepGoal = false } = {}) {
     this.cursor = Math.max(0, Math.min(this.items.length, i));

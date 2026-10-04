@@ -93,6 +93,7 @@ test('center centers between the margins', () => {
   const r = layout([code.center(), ...T('TITLE'), code.hrt(), ...T('x')]);
   const p = r.lines[0].items;
   near(p[1].x, 4.25 - 0.25); // 5 chars = .5", centered on 4.25
+  near(p[0].x, 1, '[Center] itself stays at the margin');
   near(r.lines[1].items[0].x, 1);
 });
 
