@@ -2,7 +2,7 @@
 
 import { App } from './app.js';
 import { layout, lineAt } from '../core/layout.js';
-import { courier } from '../core/measure.js';
+import { print } from '../core/measure.js';
 import { makePdf, pageOps, bytes } from '../core/pdf.js';
 import { COLS } from './screen.js';
 
@@ -73,7 +73,7 @@ P.print = function () {
 };
 
 P.printLayout = function () {
-  return layout(this.ed.items, { measure: courier });
+  return layout(this.ed.items, { measure: print });
 };
 
 P.docBase = function () {
@@ -192,6 +192,12 @@ function drawPages(canvas, res, v, pxScale) {
   }
 }
 
+const CSS_FAMILY = {
+  Courier: '"Courier New", Courier, monospace',
+  Times: '"Times New Roman", Times, serif',
+  Helvetica: 'Arial, Helvetica, sans-serif',
+};
+
 function drawPage(ctx, page, x0, y0, ppi) {
   ctx.fillStyle = '#fff';
   ctx.fillRect(x0, y0, page.w * ppi, page.h * ppi);
@@ -204,7 +210,7 @@ function drawPage(ctx, page, x0, y0, ppi) {
     }
     const bold = op.font & 1, ital = op.font & 2;
     const px = (op.pt / 72) * ppi;
-    ctx.font = `${ital ? 'italic ' : ''}${bold ? 'bold ' : ''}${px}px "Courier New", Courier, monospace`;
+    ctx.font = `${ital ? 'italic ' : ''}${bold ? 'bold ' : ''}${px}px ${CSS_FAMILY[op.family] || CSS_FAMILY.Courier}`;
     const x = x0 + op.x * ppi, y = y0 + op.y * ppi;
     if (op.attrs.includes('SHADW')) { ctx.fillStyle = '#999'; ctx.fillText(op.text, x + px * 0.06, y + px * 0.06); }
     ctx.fillStyle = op.attrs.includes('REDLN') ? '#c00' : '#000';
