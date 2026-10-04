@@ -209,6 +209,9 @@ function buildLine(ctx, start, st, stopAt) {
         } else if (it.c === 'LRMar') {
           s.lMar = it.l; s.rMar = it.r;
           if (glyphs === 0) resetLeft();
+        } else if (it.c === 'LMar' || it.c === 'RMar') {
+          if (it.c === 'LMar') s.lMar = it.v; else s.rMar = it.v;
+          if (glyphs === 0) resetLeft();
         } else if (it.c === 'Just') {
           s.just = it.v;
           if (glyphs === 0) lineJust = it.v;
@@ -370,6 +373,8 @@ export function stateAt(items, i, defaults = {}) {
     const it = items[j];
     if (isChar(it)) continue;
     if (it.c === 'LRMar') { s.lMar = it.l; s.rMar = it.r; }
+    else if (it.c === 'LMar') s.lMar = it.v;
+    else if (it.c === 'RMar') s.rMar = it.v;
     else if (it.c === 'TBMar') { s.tMar = it.t; s.bMar = it.b; }
     else if (it.c === 'Just') s.just = it.v;
     else if (it.c === 'LnSpacing') s.spacing = it.v;

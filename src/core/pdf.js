@@ -1,22 +1,11 @@
-// A minimal PDF writer for laid-out pages. Uses the standard Courier
-// faces (nothing embedded) with WinAnsiEncoding. Returns a latin1 string:
+// A minimal PDF writer for laid-out pages. Uses the standard base-14
+// faces (Courier, Times, Helvetica; nothing embedded) with WinAnsiEncoding. Returns a latin1 string:
 // one char per byte, ready for a Blob or a terrarium save.
 
-import { sizeOf, fontPoints } from './measure.js';
+import { sizeOf, fontPoints, faceIndex, familyOf, textWidth, PDF_FONTS } from './measure.js';
+import { winAnsiByte } from './afm.js';
 
-const WINANSI = {
-  '€': 0x80, '‚': 0x82, 'ƒ': 0x83, '„': 0x84, '…': 0x85, '†': 0x86,
-  '‡': 0x87, 'ˆ': 0x88, '‰': 0x89, 'Š': 0x8a, '‹': 0x8b, 'Œ': 0x8c,
-  'Ž': 0x8e, '‘': 0x91, '’': 0x92, '“': 0x93, '”': 0x94, '•': 0x95,
-  '–': 0x96, '—': 0x97, '˜': 0x98, '™': 0x99, 'š': 0x9a, '›': 0x9b,
-  'œ': 0x9c, 'ž': 0x9e, 'Ÿ': 0x9f,
-};
-
-export function winAnsiByte(ch) {
-  const c = ch.codePointAt(0);
-  if ((c >= 32 && c < 127) || (c >= 0xa0 && c <= 0xff)) return c;
-  return WINANSI[ch] ?? 63;
-}
+export { winAnsiByte };
 
 export function pdfString(s) {
   let o = '(';
@@ -30,14 +19,6 @@ export function pdfString(s) {
 }
 
 const n2 = (v) => (Math.round(v * 100) / 100).toString();
-
-const FONT_NAMES = ['Courier', 'Courier-Bold', 'Courier-Oblique', 'Courier-BoldOblique'];
-
-function fontIndex(attrs) {
-  const bold = attrs.includes('BOLD') || attrs.includes('SHADW');
-  const ital = attrs.includes('ITALC');
-  return (bold ? 1 : 0) + (ital ? 2 : 0);
-}
 
 // Drawing instructions for one page, shared with any canvas preview so the
 // two agree: [{ kind: 'text', x, y (baseline, inches), pt, font, text, attrs }]
@@ -59,17 +40,17 @@ export function pageOps(page) {
       const basePt = fontPoints(p.style.font);
       const rise = a.includes('SUPRSCPT') ? basePt * 0.33 / 72 : a.includes('SUBSCPT') ? -basePt * 0.2 / 72 : 0;
       const y = base - rise;
-      const font = fontIndex(a);
+      const font = faceIndex(p.style);
       if (glyph === ' ') {
         flush();
       } else {
-        const adv = (pt * 0.6 / 72) * [...text].length;
+        const adv = textWidth(font, text, pt);
         if (run && run.font === font && run.pt === pt && run.y === y && run.key === p.style.key &&
             Math.abs(run.x + run.adv - p.x) < 1e-4) {
           run.text += text; run.adv += adv;
         } else {
           flush();
-          run = { kind: 'text', x: p.x, y, pt, font, text, attrs: a, key: p.style.key, adv };
+          run = { kind: 'text', x: p.x, y, pt, font, family: familyOf(p.style.font), text, attrs: a, key: p.style.key, adv };
         }
       }
       const thick = Math.max(0.5, pt / 24) / 72;
@@ -87,15 +68,16 @@ export function pageOps(page) {
   }
   if (page.folio) {
     const f = page.folio;
-    ops.push({ kind: 'text', x: f.x, y: f.y + f.h * 0.78, pt: sizeOf(f.style), font: 0, text: f.text, attrs: [] });
+    ops.push({ kind: 'text', x: f.x, y: f.y + f.h * 0.78, pt: sizeOf(f.style), font: faceIndex(f.style), family: familyOf(f.style.font), text: f.text, attrs: [] });
   }
   return ops.concat(merged.filter((r) => r.x2 - r.x1 > 1e-4));
 }
 
-function contentStream(page) {
+function contentStream(page, used) {
   const H = page.h * 72;
   const out = [];
   for (const op of pageOps(page)) {
+    if (op.kind === 'text') used.add(op.font);
     if (op.kind === 'rule') {
       out.push(`${n2(op.w * 72)} w ${n2(op.x1 * 72)} ${n2(H - op.y * 72)} m ${n2(op.x2 * 72)} ${n2(H - op.y * 72)} l S`);
       continue;
@@ -116,16 +98,23 @@ export function makePdf(res, { title = 'Untitled', producer = 'Hard Return' } = 
   const add = (body) => { objs.push(body); return objs.length; };
   const catalog = add(null);
   const pagesId = add(null);
-  const fontIds = FONT_NAMES.map((name) => add(`<< /Type /Font /Subtype /Type1 /BaseFont /${name} /Encoding /WinAnsiEncoding >>`));
   const info = add(`<< /Title ${pdfString(title)} /Producer ${pdfString(producer)} >>`);
-  const fontDict = '<< ' + fontIds.map((id, k) => `/F${k + 1} ${id} 0 R`).join(' ') + ' >>';
+  const used = new Set();
+  const streams = res.pages.map((page) => contentStream(page, used));
+  // only the faces the document uses (Courier when it is empty)
+  if (!used.size) used.add(0);
+  const fontIds = {};
+  for (const k of [...used].sort((a, b) => a - b)) {
+    fontIds[k] = add(`<< /Type /Font /Subtype /Type1 /BaseFont /${PDF_FONTS[k]} /Encoding /WinAnsiEncoding >>`);
+  }
+  const fontDict = '<< ' + Object.entries(fontIds).map(([k, id]) => `/F${Number(k) + 1} ${id} 0 R`).join(' ') + ' >>';
   const kids = [];
-  for (const page of res.pages) {
-    const stream = contentStream(page);
+  res.pages.forEach((page, k) => {
+    const stream = streams[k];
     const cid = add(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
     const pid = add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${n2(page.w * 72)} ${n2(page.h * 72)}] /Resources << /Font ${fontDict} >> /Contents ${cid} 0 R >>`);
     kids.push(pid);
-  }
+  });
   objs[catalog - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
   objs[pagesId - 1] = `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`;
 

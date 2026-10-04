@@ -18,7 +18,7 @@ export const SIZE_NAMES = ['SUPRSCPT', 'SUBSCPT', 'FINE', 'SMALL', 'LARGE', 'VRY
 
 // Paragraph-level format codes: auto code placement puts them at the start
 // of the paragraph. Page-level ones go at the top of the page.
-export const PARA_CODES = new Set(['LRMar', 'Just', 'LnSpacing', 'TabSet']);
+export const PARA_CODES = new Set(['LRMar', 'LMar', 'RMar', 'Just', 'LnSpacing', 'TabSet']);
 export const PAGE_CODES = new Set(['TBMar', 'CntrPg', 'PgNum']);
 
 export const JUSTIFY = ['Left', 'Center', 'Right', 'Full'];
@@ -47,6 +47,9 @@ export const code = {
   center: () => ({ c: 'Center' }),
   flushRight: () => ({ c: 'FlshRgt' }),
   lrMar: (l, r) => ({ c: 'LRMar', l, r }),
+  // one margin at a time, as the ruler sets them
+  lMar: (v) => ({ c: 'LMar', v }),
+  rMar: (v) => ({ c: 'RMar', v }),
   tbMar: (t, b) => ({ c: 'TBMar', t, b }),
   just: (v) => ({ c: 'Just', v }),
   lnSpacing: (v) => ({ c: 'LnSpacing', v }),
@@ -125,6 +128,8 @@ export function label(it) {
     case 'Center': return 'Center';
     case 'FlshRgt': return 'Flsh Rgt';
     case 'LRMar': return `L/R Mar:${inches(it.l)},${inches(it.r)}`;
+    case 'LMar': return `Lft Mar:${inches(it.v)}`;
+    case 'RMar': return `Rgt Mar:${inches(it.v)}`;
     case 'TBMar': return `T/B Mar:${inches(it.t)},${inches(it.b)}`;
     case 'Just': return `Just:${it.v}`;
     case 'LnSpacing': return `Ln Spacing:${it.v}`;

@@ -82,7 +82,25 @@ export class Editor {
     if (PARA_CODES.has(c.c)) at = paragraphStart(this.items, this.cursor);
     else if (PAGE_CODES.has(c.c) && pageStart !== null) at = pageStart;
     else { this.insertCode(c); return this.cursor - 1; }
-    for (let j = at; j < this.items.length && isCode(this.items[j]) && !is(this.items[j], 'HRt') && !is(this.items[j], 'HPg'); j++) {
+    const leading = (j) => j < this.items.length && isCode(this.items[j]) && !is(this.items[j], 'HRt') && !is(this.items[j], 'HPg');
+    // [L/R Mar] sets both margins: one margin folds into it, and it
+    // replaces single-margin codes already there.
+    for (let j = at; leading(j); j++) {
+      const o = this.items[j];
+      if ((c.c === 'LMar' || c.c === 'RMar') && o.c === 'LRMar') {
+        this.items[j] = c.c === 'LMar' ? { ...o, l: c.v } : { ...o, r: c.v };
+        this._changed();
+        return j;
+      }
+      if (c.c === 'LRMar' && (o.c === 'LMar' || o.c === 'RMar')) {
+        this.items.splice(j, 1);
+        if (this.cursor > j) this.cursor--;
+        if (this.anchor !== null && this.anchor > j) this.anchor--;
+        j--;
+        this._changed();
+      }
+    }
+    for (let j = at; leading(j); j++) {
       if (this.items[j].c === c.c) {
         this.items[j] = c;
         this._changed();
