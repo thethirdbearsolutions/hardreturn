@@ -6,6 +6,9 @@ code stream you see in Reveal Codes.
 
 No build step and no runtime dependencies. Plain ES modules, static files.
 
+There is also a [Windows front end](win/README.md) at `/win/`, after
+WordPerfect 6.1 for Windows. It opens the same documents.
+
 ## Run
 
 ```sh
@@ -47,7 +50,8 @@ Every command is on the keyboard template under the screen; click an entry
 to send that key. Alternatives: Alt-F3 for F11, Alt-F4 or F12 for Block,
 and the menu bar (`Alt-=`, Edit) for Move.
 
-Print (Shift-F7) writes a PDF in Courier: 1 Full Document, 2 Page, and
+Print (Shift-F7) writes a PDF in the document's fonts (Courier unless it
+has a Times or Arial `[Font]` code): 1 Full Document, 2 Page, and
 6 View Document for an on-screen preview at 100%, 200%, full page or
 facing pages.
 
@@ -70,6 +74,7 @@ saved and retrieved as plain text.
   of the stream and a measure), measures (`measure.js`), file formats,
   the PDF writer, spelling, disks and the terrarium/1 client.
 - `src/dos/` is the text-mode front end.
+- `src/win/` is the Windows front end (`win/index.html`).
 - `test/` runs with node's built-in runner.
 
 ## Tests

@@ -32,6 +32,11 @@ export function buildTemplate(root, onKey, implemented) {
   legend.className = 'tpl-legend';
   legend.innerHTML = '<span class="lc">Ctrl</span> <span class="ls">Shift</span> <span class="la">Alt</span> <span class="ln">Alone</span>';
   bar.appendChild(legend);
+  const win = document.createElement('a');
+  win.className = 'tpl-link';
+  win.href = 'win/';
+  win.textContent = 'Windows';
+  bar.appendChild(win);
   root.appendChild(bar);
 
   const body = document.createElement('div');
