@@ -102,4 +102,31 @@ january february april june july august october november december
 red orange yellow green blue purple violet gray grey black white pink
 coffee tea lunch breakfast dinner supper meal kitchen bread butter cheese milk
 monday tuesday wednesday thursday friday saturday sunday
+cat cats bird fish horse cow pig sheep chicken mouse animal tree flower grass leaf
+apple orange banana fruit vegetable potato tomato egg sugar salt water wine beer juice
+sun moon star sky cloud rain snow wind storm weather hot cold warm cool wet dry
+house home room door window floor wall roof kitchen bedroom bathroom garden yard street
+road car bus train plane boat bike ship truck station airport ticket trip travel
+city town village country state nation world map north south east west left right
+man woman boy girl child baby friend family parent mother father son daughter husband wife
+head face eye ear nose mouth hand arm leg foot finger hair heart body skin blood bone
+red blue green yellow black white brown gray pink orange purple gold silver
+one two three four five six seven eight nine ten eleven twelve hundred thousand million
+first second third last next early late soon now never always often sometimes usually
+happy sad angry tired hungry sick well fine glad sorry afraid sure ready busy free
+big small large little long short tall high low wide narrow thick thin heavy light
+new old young fresh clean dirty easy hard soft loud quiet fast slow quick rich poor
+good bad better best worse worst nice kind cheap dear expensive
+ask tell say speak talk call write read sing dance play run walk jump sit stand sleep
+eat drink cook buy sell pay give take bring send carry hold keep put set open close
+start stop begin end finish make do go come see look watch hear listen feel think know
+love like hate want need hope wish try help use work learn teach study show find lose
+win fail pass move stay live die grow change turn break fix build clean wash wear
+dress shirt shoe shoes hat coat pocket bag box key pen pencil paper book letter note card
+table chair desk bed lamp clock phone radio television computer printer screen keyboard
+money price cost bill bank shop store market office school church hospital hotel library
+morning noon evening night week month year today tonight yesterday tomorrow hour minute
+question answer problem idea reason result example fact story news word name number
+dot matrix inquiry note notes convenience sale underline printer printers
+the of and to in is was for on that with as at by from it this be are or an have not
 `.trim().split(/\s+/);

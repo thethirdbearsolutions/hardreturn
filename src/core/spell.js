@@ -74,8 +74,11 @@ export class Speller {
       }
     }
     const caps = word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase();
+    // transposed letters first, then the same first letter, then nearest length
+    const sorted = (x) => [...x].sort().join('');
+    const rank = (c, d) => d * 4 - (sorted(c) === sorted(w) ? 2 : 0) - (c[0] === w[0] ? 1 : 0);
     return [...found.entries()]
-      .sort((a, b) => a[1] - b[1] || Math.abs(a[0].length - w.length) - Math.abs(b[0].length - w.length) || a[0].localeCompare(b[0]))
+      .sort((a, b) => rank(a[0], a[1]) - rank(b[0], b[1]) || Math.abs(a[0].length - w.length) - Math.abs(b[0].length - w.length) || a[0].localeCompare(b[0]))
       .slice(0, max)
       .map(([s]) => (caps ? s[0].toUpperCase() + s.slice(1) : s));
   }

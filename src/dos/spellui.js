@@ -120,7 +120,6 @@ P.notFound = function (sugg) {
         this.drawSpellTop(scr);
         this.drawSuggestions(scr, sugg);
         const c = scr.puts(24, 0, ['Not Found: 1 ', ['S', 'mn'], 'kip Once; 2 S', ['k', 'mn'], 'ip; 3 ', ['A', 'mn'], 'dd; 4 ', ['E', 'mn'], 'dit; 5 ', ['L', 'mn'], 'ook Up; 6 ', ['I', 'mn'], 'gnore Numbers: 0']);
-        if (sugg.length) scr.put(23, 0, 'Press Enter for more words');
         scr.setCursor(24, c - 1);
       },
       key: (k) => {
